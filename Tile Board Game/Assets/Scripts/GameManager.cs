@@ -6,6 +6,7 @@ public class GameManager : MonoBehaviour
 {
 
     public static GameManager Instance { get; private set; }
+
     [SerializeField] public Color currentColor;
 
     private void Awake() {
@@ -17,7 +18,7 @@ public class GameManager : MonoBehaviour
         }
     }    
 
-    void PickColour() {
-        
+    public void PickColour() {
+        //currentColor = color;
     }
 }
