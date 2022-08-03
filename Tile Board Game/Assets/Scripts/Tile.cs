@@ -20,6 +20,13 @@ public class Tile : MonoBehaviour {
     }
 
     private void OnMouseDown() {
+        if (GameManager.Instance.currentColor == Color.white) {
+            Init(true);
+            return;
+        }
+
+        GameManager.Instance.turns += 1;
+        GameManager.Instance.turnCounter.text = GameManager.Instance.turns.ToString();
         ChangeColour(GameManager.Instance.currentColor);
     }
 

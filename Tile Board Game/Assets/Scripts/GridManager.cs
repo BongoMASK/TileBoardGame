@@ -10,8 +10,6 @@ public class GridManager : MonoBehaviour {
 
     [SerializeField] private Transform _cam;
 
-    [SerializeField] private Color currentColor;
-
     private Dictionary<Vector2, Tile> _tiles;
 
     void Start() {
