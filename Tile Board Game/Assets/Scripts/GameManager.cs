@@ -2,34 +2,21 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-
     public static GameManager Instance { get; private set; }
 
-    [SerializeField] Color[] colors;
+    [SerializeField] public Color[] colors;
+    [SerializeField] public int colorIndex = 0;
 
-    [SerializeField] public Color currentColor;
-
-    private void Awake()
-    {
-        currentColor = colors[0];
-
-        if (Instance != null && Instance != this)
-        {
+    private void Awake() {
+        if (Instance != null && Instance != this) {
             Destroy(this);
         }
-        else
-        {
+        else {
             Instance = this;
         }
     }
 
-    public void PickColour(int i)
-    {
-        if (i >= colors.Length)
-        {
-            currentColor = Color.white;
-            return;
-        }
-        currentColor = colors[i];
+    public void PickColour(int i) {
+        colorIndex = i;
     }
 }

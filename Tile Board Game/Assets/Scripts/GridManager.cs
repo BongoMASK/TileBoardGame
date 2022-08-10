@@ -28,7 +28,7 @@ public class GridManager : MonoBehaviour
         }
         foreach(var key in _tiles.Keys)
         {
-            _tiles[key].setDirectionData();
+            _tiles[key].SetDirectionData();
         }
     }
 }
