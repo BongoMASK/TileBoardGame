@@ -7,8 +7,8 @@ public class Tile : MonoBehaviour {
     [SerializeField] private SpriteRenderer _renderer;
     [SerializeField] private GameObject _highlight;
 
-    public void Init(bool isOffset) {
-        _renderer.color = isOffset ? _offsetColor : _baseColor;
+    public void Init() {
+        _renderer.color = _offsetColor;
     }
 
     void OnMouseEnter() {
@@ -21,16 +21,14 @@ public class Tile : MonoBehaviour {
 
     private void OnMouseDown() {
         if (GameManager.Instance.currentColor == Color.white) {
-            Init(true);
+            Init();
             return;
         }
-
-        GameManager.Instance.turns += 1;
-        GameManager.Instance.turnCounter.text = GameManager.Instance.turns.ToString();
         ChangeColour(GameManager.Instance.currentColor);
     }
-
     public void ChangeColour(Color color) {
         _renderer.color = color;
     }
+
+
 }
