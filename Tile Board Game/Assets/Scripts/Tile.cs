@@ -5,8 +5,6 @@ public class Tile : MonoBehaviour {
     [SerializeField] private SpriteRenderer _renderer;
     [SerializeField] private GameObject _highlight;
 
-
-
     public Tile up;
     public Tile down;
     public Tile left;
