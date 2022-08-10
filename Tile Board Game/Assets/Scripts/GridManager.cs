@@ -7,7 +7,7 @@ public class GridManager : MonoBehaviour
 
     [SerializeField] private Tile _tilePrefab;
 
-    private Dictionary<Vector2, Tile> _tiles;
+    public static Dictionary<Vector2, Tile> _tiles;
 
     void Start()
     {
@@ -25,6 +25,10 @@ public class GridManager : MonoBehaviour
                 spawnedTile.name = $"Tile {x} {y}";
                 _tiles[new Vector2(x, y)] = spawnedTile;
             }
+        }
+        foreach(var key in _tiles.Keys)
+        {
+            _tiles[key].setDirectionData();
         }
     }
 }
