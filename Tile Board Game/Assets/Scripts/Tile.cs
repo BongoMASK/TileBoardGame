@@ -92,25 +92,24 @@ public class Tile : MonoBehaviour {
         _highlight.SetActive(false);
     }
 
+    // Applying colour to white tile
     private void OnMouseDown() {
         ChangeTileState((TileState)GameManager.Instance.colorIndex);
     }
 
-    public void ChangeColour(int i) {
-        _renderer.color = GameManager.Instance.colors[i];
-    }
-
+    // Changes tile colour and state
     void ChangeTileState(TileState thisTileState) {
         tileState = thisTileState;
-        ChangeColour((int)thisTileState);
+        _renderer.color = GameManager.Instance.colors[(int)thisTileState];
     }
 
+    // Sets borders for the tile
     public void SetDirectionData() {
         Vector2 tilePos = transform.position;
 
-        borders[(int)TileBorder.up] = GetTileAtPos(tilePos + new Vector2(0, 1));     // up
-        borders[(int)TileBorder.down] = GetTileAtPos(tilePos + new Vector2(0, -1));    // down
-        borders[(int)TileBorder.left] = GetTileAtPos(tilePos + new Vector2(-1, 0));    // left
+        borders[(int)TileBorder.up] = GetTileAtPos(tilePos + new Vector2(0, 1));        // up
+        borders[(int)TileBorder.down] = GetTileAtPos(tilePos + new Vector2(0, -1));     // down
+        borders[(int)TileBorder.left] = GetTileAtPos(tilePos + new Vector2(-1, 0));     // left
         borders[(int)TileBorder.right] = GetTileAtPos(tilePos + new Vector2(1, 0));     // right
     }
 
@@ -147,15 +146,16 @@ public class Tile : MonoBehaviour {
             return;
         }
 
-        // if tile is not white, shift to next tile
+        // if tile is not white, check next tile
         if (tileState != TileState.white)
             borders[(int)b1].Push(b1, b2);
 
-        // shift left to tile to current tile
+        // If null, delete the current tile
         if (borders[(int)b2] == null) {
             ChangeTileState(TileState.white);
             return;
         }
+        // shift previous tile to current tile if null
         ChangeTileState(borders[(int)b2].tileState);
     }
 }
