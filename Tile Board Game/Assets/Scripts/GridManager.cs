@@ -7,7 +7,8 @@ public class GridManager : MonoBehaviour
 
     [SerializeField] private Tile _tilePrefab;
 
-    public static Dictionary<Vector2, Tile> _tiles;
+    [SerializeField] Transform tileParent;
+
 
     void Start()
     {
@@ -16,19 +17,20 @@ public class GridManager : MonoBehaviour
 
     void GenerateGrid()
     {
-        _tiles = new Dictionary<Vector2, Tile>();
+        GameManager.Instance._tiles = new Dictionary<Vector2, Tile>();
         for (int x = 0; x < _width; x++)
         {
             for (int y = 0; y < _height; y++)
             {
                 var spawnedTile = Instantiate(_tilePrefab, new Vector3(x, y), Quaternion.identity);
+                spawnedTile.transform.parent = tileParent;
                 spawnedTile.name = $"Tile {x} {y}";
-                _tiles[new Vector2(x, y)] = spawnedTile;
+                GameManager.Instance._tiles[new Vector2(x, y)] = spawnedTile;
             }
         }
-        foreach(var key in _tiles.Keys)
+        foreach(var key in GameManager.Instance._tiles.Keys)
         {
-            _tiles[key].SetDirectionData();
+            GameManager.Instance._tiles[key].SetDirectionData();
         }
     }
 }

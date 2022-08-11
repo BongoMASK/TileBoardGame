@@ -1,46 +1,90 @@
 using UnityEngine;
 
 public class Tile : MonoBehaviour {
-    [SerializeField] private Color _baseColor, _offsetColor;
+
     [SerializeField] private SpriteRenderer _renderer;
     [SerializeField] private GameObject _highlight;
 
-    public Tile up;
-    public Tile down;
-    public Tile left;
-    public Tile right;
+    public Tile[] borders;
 
-    public enum TileState {
+    public enum TileBorder {
+        up = 0,
+        down,
+        left,
+        right
+    }
+
+    enum TileState {
         red = 0,
         blue,
         white
     }
 
+    // try to use events and scriptable objects
+
     [SerializeField] TileState tileState = TileState.white;
 
-    void OnMouseEnter() {
+    // Checking how many consecutive same coloured tiles are there
+    int GetPushPower(TileState firstTileState, TileBorder b) {
+        if (firstTileState == TileState.white || firstTileState != tileState)
+            return 0;
+
+        if (borders[(int)b] == null)
+            return 1;
+
+        return 1 + borders[(int)b].GetPushPower(firstTileState, b);
+    }
+
+    // Checking the next tile that is coloured
+    Tile TraverseTile(TileBorder b) {
+        if (tileState != TileState.white)
+            return this;
+
+        if (borders[(int)b] == null)
+            return null;
+
+        return borders[(int)b].TraverseTile(b);
+    }
+
+    private void OnMouseEnter() {
         _highlight.SetActive(true);
     }
 
     private void OnMouseOver() {
         if (Input.GetKeyDown(KeyCode.RightArrow)) {
-            Push_Right();
-            ChangeTileState(TileState.white);
+            // Find consecutive same coloured tiles for pushing power
+            int p = GetPushPower(tileState, TileBorder.right);
+
+            // Continue until pushpower is not finished
+            while (p-- > 0)
+                TraverseTile(TileBorder.right).Push_Right();
         }
 
         if (Input.GetKeyDown(KeyCode.LeftArrow)) {
-            Push_Left();
-            ChangeTileState(TileState.white);
+            // Find consecutive same coloured tiles for pushing power
+            int p = GetPushPower(tileState, TileBorder.left);
+
+            // Continue until pushpower is not finished
+            while (p-- > 0)
+                TraverseTile(TileBorder.left).Push_Left();
         }
 
         if (Input.GetKeyDown(KeyCode.UpArrow)) {
-            Push_Up();
-            ChangeTileState(TileState.white);
+            // Find consecutive same coloured tiles for pushing power
+            int p = GetPushPower(tileState, TileBorder.up);
+            
+            // Continue until pushpower is not finished
+            while (p-- > 0)
+                TraverseTile(TileBorder.up).Push_Up();
         }
 
         if (Input.GetKeyDown(KeyCode.DownArrow)) {
-            Push_Down();
-            ChangeTileState(TileState.white);
+            // Find consecutive same coloured tiles for pushing power
+            int p = GetPushPower(tileState, TileBorder.down);
+            
+            // Continue until pushpower is not finished
+            while (p-- > 0)
+                TraverseTile(TileBorder.down).Push_Down();
         }
     }
 
@@ -52,27 +96,8 @@ public class Tile : MonoBehaviour {
         ChangeTileState((TileState)GameManager.Instance.colorIndex);
     }
 
-    public void Init() {
-        _renderer.color = _offsetColor;
-    }
-
     public void ChangeColour(int i) {
         _renderer.color = GameManager.Instance.colors[i];
-    }
-
-    public void SetDirectionData() {
-        Vector2 tilePos = transform.position;
-
-        up = GetTileAtPos(tilePos + new Vector2(0, 1));
-        down = GetTileAtPos(tilePos + new Vector2(0, -1));
-        left = GetTileAtPos(tilePos + new Vector2(-1, 0));
-        right = GetTileAtPos(tilePos + new Vector2(1, 0));
-    }
-
-    Tile GetTileAtPos(Vector2 pos) {
-        if (GridManager._tiles.ContainsKey(pos))
-            return GridManager._tiles[pos];
-        return null;
     }
 
     void ChangeTileState(TileState thisTileState) {
@@ -80,80 +105,57 @@ public class Tile : MonoBehaviour {
         ChangeColour((int)thisTileState);
     }
 
+    public void SetDirectionData() {
+        Vector2 tilePos = transform.position;
+
+        borders[(int)TileBorder.up] = GetTileAtPos(tilePos + new Vector2(0, 1));     // up
+        borders[(int)TileBorder.down] = GetTileAtPos(tilePos + new Vector2(0, -1));    // down
+        borders[(int)TileBorder.left] = GetTileAtPos(tilePos + new Vector2(-1, 0));    // left
+        borders[(int)TileBorder.right] = GetTileAtPos(tilePos + new Vector2(1, 0));     // right
+    }
+
+    Tile GetTileAtPos(Vector2 pos) {
+        if (GameManager.Instance._tiles.ContainsKey(pos))
+            return GameManager.Instance._tiles[pos];
+        return null;
+    }
+
     void Push_Right() {
-        // if there are no tiles left
-        if (right == null) {
-            ChangeTileState(left.tileState);
-            return;
-        }
-
-        // if tile is not white, shift to next tile
-        if (tileState != TileState.white)
-            right.Push_Right();
-
-        // shift left to tile to current tile
-        if (left == null) {
-            ChangeTileState(TileState.white);
-            return;
-        }
-        ChangeTileState(left.tileState);
-        
+        Push(TileBorder.right, TileBorder.left);
+        ChangeTileState(TileState.white);
     }
 
     void Push_Left() {
-        // if there are no tiles left
-        if (left == null) {
-            ChangeTileState(right.tileState);
-            return;
-        }
-
-        // if tile is not white, shift to next tile
-        if (tileState != TileState.white)
-            left.Push_Left();
-
-        // shift left to tile to current tile
-        if (right == null) {
-            ChangeTileState(TileState.white);
-            return;
-        }
-        ChangeTileState(right.tileState);
+        Push(TileBorder.left, TileBorder.right);
+        ChangeTileState(TileState.white);
     }
 
     void Push_Up() {
-        // if there are no tiles left
-        if (up == null) {
-            ChangeTileState(down.tileState);
-            return;
-        }
-
-        // if tile is not white, shift to next tile
-        if (tileState != TileState.white)
-            up.Push_Up();
-
-        // shift left to tile to current tile
-        if (down == null) {
-            ChangeTileState(TileState.white);
-            return;
-        }
-        ChangeTileState(down.tileState);
+        Push(TileBorder.up, TileBorder.down);
+        ChangeTileState(TileState.white);
     }
 
     void Push_Down() {
+        Push(TileBorder.down, TileBorder.up);
+        ChangeTileState(TileState.white);
+    }
+
+    void Push(TileBorder b1, TileBorder b2) {
         // if there are no tiles left
-        if (down == null) {
-            ChangeTileState(up.tileState);
+        if (borders[(int)b1] == null) {
+            ChangeTileState(borders[(int)b2].tileState);
             return;
         }
 
         // if tile is not white, shift to next tile
         if (tileState != TileState.white)
-            down.Push_Down();
+            borders[(int)b1].Push(b1, b2);
 
         // shift left to tile to current tile
-        if (up == null) {
+        if (borders[(int)b2] == null) {
             ChangeTileState(TileState.white);
             return;
         }
-        ChangeTileState(up.tileState);
+        ChangeTileState(borders[(int)b2].tileState);
     }
 }

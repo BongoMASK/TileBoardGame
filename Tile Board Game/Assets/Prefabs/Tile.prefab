@@ -179,14 +179,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac25382e3c129a640b03debedd68002e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _baseColor: {r: 1, g: 1, b: 1, a: 1}
-  _offsetColor: {r: 1, g: 1, b: 1, a: 1}
   _renderer: {fileID: 601264974011682358}
   _highlight: {fileID: 601264973608808302}
-  up: {fileID: 0}
-  down: {fileID: 0}
-  left: {fileID: 0}
-  right: {fileID: 0}
+  borders:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  tileState: 2
 --- !u!61 &601264974011682344
 BoxCollider2D:
   m_ObjectHideFlags: 0
