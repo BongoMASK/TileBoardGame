@@ -51,6 +51,9 @@ public class Tile : MonoBehaviour {
     }
 
     private void OnMouseOver() {
+        if (GameManager.Instance.colorIndex != (int)tileState)
+            return;
+
         if (Input.GetKeyDown(KeyCode.RightArrow)) {
             // Find consecutive same coloured tiles for pushing power
             int p = GetPushPower(tileState, TileBorder.right);
@@ -72,7 +75,7 @@ public class Tile : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.UpArrow)) {
             // Find consecutive same coloured tiles for pushing power
             int p = GetPushPower(tileState, TileBorder.up);
-            
+
             // Continue until pushpower is not finished
             while (p-- > 0)
                 TraverseTile(TileBorder.up).Push_Up();
@@ -81,7 +84,7 @@ public class Tile : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.DownArrow)) {
             // Find consecutive same coloured tiles for pushing power
             int p = GetPushPower(tileState, TileBorder.down);
-            
+
             // Continue until pushpower is not finished
             while (p-- > 0)
                 TraverseTile(TileBorder.down).Push_Down();
@@ -95,6 +98,7 @@ public class Tile : MonoBehaviour {
     // Applying colour to white tile
     private void OnMouseDown() {
         ChangeTileState((TileState)GameManager.Instance.colorIndex);
+        SwitchTurn();
     }
 
     // Changes tile colour and state
@@ -122,21 +126,25 @@ public class Tile : MonoBehaviour {
     void Push_Right() {
         Push(TileBorder.right, TileBorder.left);
         ChangeTileState(TileState.white);
+        SwitchTurn();
     }
 
     void Push_Left() {
         Push(TileBorder.left, TileBorder.right);
         ChangeTileState(TileState.white);
+        SwitchTurn();
     }
 
     void Push_Up() {
         Push(TileBorder.up, TileBorder.down);
         ChangeTileState(TileState.white);
+        SwitchTurn();
     }
 
     void Push_Down() {
         Push(TileBorder.down, TileBorder.up);
         ChangeTileState(TileState.white);
+        SwitchTurn();
     }
 
     void Push(TileBorder b1, TileBorder b2) {
@@ -157,5 +165,12 @@ public class Tile : MonoBehaviour {
         }
         // shift previous tile to current tile if null
         ChangeTileState(borders[(int)b2].tileState);
+    }
+    private static void SwitchTurn() {
+        if (GameManager.Instance.colorIndex == 0) {
+            GameManager.Instance.colorIndex = 1;
+            return;
+        }
+        GameManager.Instance.colorIndex = 0;
     }
 }
