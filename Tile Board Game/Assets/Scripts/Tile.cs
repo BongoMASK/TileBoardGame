@@ -98,13 +98,16 @@ public class Tile : MonoBehaviour {
     // Applying colour to white tile
     private void OnMouseDown() {
         ChangeTileState((TileState)GameManager.Instance.colorIndex);
-        SwitchTurn();
     }
 
     // Changes tile colour and state
     void ChangeTileState(TileState thisTileState) {
+        if (tileState != TileState.white) 
+            return;
+        
         tileState = thisTileState;
         _renderer.color = GameManager.Instance.colors[(int)thisTileState];
+        SwitchTurn();
     }
 
     // Sets borders for the tile
