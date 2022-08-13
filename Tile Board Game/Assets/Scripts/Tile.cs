@@ -61,6 +61,7 @@ public class Tile : MonoBehaviour {
             // Continue until pushpower is not finished
             while (p-- > 0)
                 TraverseTile(TileBorder.right).Push_Right();
+            SwitchTurn();
         }
 
         if (Input.GetKeyDown(KeyCode.LeftArrow)) {
@@ -70,6 +71,7 @@ public class Tile : MonoBehaviour {
             // Continue until pushpower is not finished
             while (p-- > 0)
                 TraverseTile(TileBorder.left).Push_Left();
+            SwitchTurn();
         }
 
         if (Input.GetKeyDown(KeyCode.UpArrow)) {
@@ -79,6 +81,7 @@ public class Tile : MonoBehaviour {
             // Continue until pushpower is not finished
             while (p-- > 0)
                 TraverseTile(TileBorder.up).Push_Up();
+            SwitchTurn();
         }
 
         if (Input.GetKeyDown(KeyCode.DownArrow)) {
@@ -88,6 +91,7 @@ public class Tile : MonoBehaviour {
             // Continue until pushpower is not finished
             while (p-- > 0)
                 TraverseTile(TileBorder.down).Push_Down();
+            SwitchTurn();
         }
     }
 
@@ -97,17 +101,16 @@ public class Tile : MonoBehaviour {
 
     // Applying colour to white tile
     private void OnMouseDown() {
-        ChangeTileState((TileState)GameManager.Instance.colorIndex);
+        if (tileState != TileState.white)
+            return;
+
+        ChangeTileToColour((TileState)GameManager.Instance.colorIndex);
+        SwitchTurn();
     }
 
-    // Changes tile colour and state
-    void ChangeTileState(TileState thisTileState) {
-        if (tileState != TileState.white) 
-            return;
-        
+    void ChangeTileToColour(TileState thisTileState) {
         tileState = thisTileState;
         _renderer.color = GameManager.Instance.colors[(int)thisTileState];
-        SwitchTurn();
     }
 
     // Sets borders for the tile
@@ -128,32 +131,28 @@ public class Tile : MonoBehaviour {
 
     void Push_Right() {
         Push(TileBorder.right, TileBorder.left);
-        ChangeTileState(TileState.white);
-        SwitchTurn();
+        ChangeTileToColour(TileState.white);
     }
 
     void Push_Left() {
         Push(TileBorder.left, TileBorder.right);
-        ChangeTileState(TileState.white);
-        SwitchTurn();
+        ChangeTileToColour(TileState.white);
     }
 
     void Push_Up() {
         Push(TileBorder.up, TileBorder.down);
-        ChangeTileState(TileState.white);
-        SwitchTurn();
+        ChangeTileToColour(TileState.white);
     }
 
     void Push_Down() {
         Push(TileBorder.down, TileBorder.up);
-        ChangeTileState(TileState.white);
-        SwitchTurn();
+        ChangeTileToColour(TileState.white);
     }
 
     void Push(TileBorder b1, TileBorder b2) {
         // if there are no tiles left
         if (borders[(int)b1] == null) {
-            ChangeTileState(borders[(int)b2].tileState);
+            ChangeTileToColour(borders[(int)b2].tileState);
             return;
         }
 
@@ -163,11 +162,11 @@ public class Tile : MonoBehaviour {
 
         // If null, delete the current tile
         if (borders[(int)b2] == null) {
-            ChangeTileState(TileState.white);
+            ChangeTileToColour(TileState.white);
             return;
         }
         // shift previous tile to current tile if null
-        ChangeTileState(borders[(int)b2].tileState);
+        ChangeTileToColour(borders[(int)b2].tileState);
     }
     private static void SwitchTurn() {
         if (GameManager.Instance.colorIndex == 0) {
