@@ -51,6 +51,7 @@ public class Tile : MonoBehaviour {
     }
 
     private void OnMouseOver() {
+        // Don't play a move if its not player
         if (GameManager.Instance.colorIndex != (int)tileState)
             return;
 
@@ -101,6 +102,7 @@ public class Tile : MonoBehaviour {
 
     // Applying colour to white tile
     private void OnMouseDown() {
+        // Don't colour tile if its already coloured
         if (tileState != TileState.white)
             return;
 
@@ -131,21 +133,33 @@ public class Tile : MonoBehaviour {
 
     void Push_Right() {
         Push(TileBorder.right, TileBorder.left);
+
+        // Change tile that was originally pushed to white
+        // Leaving this line out causes duplicates
         ChangeTileToColour(TileState.white);
     }
 
     void Push_Left() {
         Push(TileBorder.left, TileBorder.right);
+
+        // Change tile that was originally pushed to white
+        // Leaving this line out causes duplicates
         ChangeTileToColour(TileState.white);
     }
 
     void Push_Up() {
         Push(TileBorder.up, TileBorder.down);
+
+        // Change tile that was originally pushed to white
+        // Leaving this line out causes duplicates
         ChangeTileToColour(TileState.white);
     }
 
     void Push_Down() {
         Push(TileBorder.down, TileBorder.up);
+
+        // Change tile that was originally pushed to white
+        // Leaving this line out causes duplicates
         ChangeTileToColour(TileState.white);
     }
 
@@ -161,6 +175,8 @@ public class Tile : MonoBehaviour {
             borders[(int)b1].Push(b1, b2);
 
         // If null, delete the current tile
+        // special case for when a tile is at the edge of the board and wants to go inwards
+        // Gives error coz it has nothing to copy a tilestate from
         if (borders[(int)b2] == null) {
             ChangeTileToColour(TileState.white);
             return;
@@ -168,6 +184,7 @@ public class Tile : MonoBehaviour {
         // shift previous tile to current tile if null
         ChangeTileToColour(borders[(int)b2].tileState);
     }
+
     private static void SwitchTurn() {
         if (GameManager.Instance.colorIndex == 0) {
             GameManager.Instance.colorIndex = 1;
